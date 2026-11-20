@@ -1,0 +1,147 @@
+diff -u -r hand-completed/05_c-linux-file-utils_gQRmSlcTq9c/src/find.c hand-remade/05_c-linux-file-utils_gQRmSlcTq9c//src/find.c
+--- hand-completed/05_c-linux-file-utils_gQRmSlcTq9c/src/find.c	2026-11-11 00:34:44.843022900 -0800
++++ hand-remade/05_c-linux-file-utils_gQRmSlcTq9c//src/find.c	2026-11-11 00:58:53.447373600 -0800
+@@ -3,6 +3,12 @@
+ #include <unistd.h>
+ #include <dirent.h>
+ #include <string.h>
++#include <fnmatch.h>
++
++// pattern is shell glob: "*.c", "main.?", "*cat*"
++int match(const char *name, const char *pattern) {
++  return fnmatch(pattern, name, 0) == 0;
++}
+ 
+ int walkfind(const char *path, const char *pattern) {
+   struct stat st;
+@@ -12,7 +18,8 @@
+   }
+ 
+   if (!S_ISDIR(st.st_mode)) {
+-    if (strstr(path, pattern)) {
++    const char *name = strrchr(path, '/');
++    if (match(name ? name + 1 : path, pattern)) {
+       printf("%s\n", path);
+     }
+     return 0; // file is done, no dir to open
+@@ -43,7 +50,7 @@
+     }
+ 
+     if (!S_ISDIR(st_child.st_mode)) {
+-      if (strstr(name, pattern)) {
++      if (match(name, pattern)) {
+         printf("%s\n", new_path);
+       }
+     } else if (walkfind(new_path, pattern)) {
+@@ -59,7 +66,7 @@
+ 
+ int main(int argc, char *argv[]) {
+   if (argc < 3) {
+-    printf("Usage: find [pattern] [path]...\n");
++    printf("Usage: find [pattern] [path]...   (pattern like '*.c')\n");
+     return 0;
+   }
+ 
+diff -u -r hand-completed/05_c-linux-file-utils_gQRmSlcTq9c/src/mkdir.c hand-remade/05_c-linux-file-utils_gQRmSlcTq9c//src/mkdir.c
+--- hand-completed/05_c-linux-file-utils_gQRmSlcTq9c/src/mkdir.c	2026-11-11 00:34:12.337265200 -0800
++++ hand-remade/05_c-linux-file-utils_gQRmSlcTq9c//src/mkdir.c	2026-11-11 00:58:27.538597200 -0800
+@@ -1,15 +1,48 @@
+ #include <stdio.h>
++#include <string.h>
++#include <errno.h>
+ #include <sys/stat.h>
+ 
++// mkdir that is ok when dir already there
++int make(const char *path) {
++  if (mkdir(path, 0777) == 0)
++    return 0;
++
++  struct stat st;
++  if (errno == EEXIST && stat(path, &st) == 0 && S_ISDIR(st.st_mode))
++    return 0;
++  return 1;
++}
++
++// -p: make each parent first, "a/b/c" -> "a", "a/b", "a/b/c"
++int make_parents(char *path) {
++  for (char *p = path + 1; *p; p++) {
++    if (*p != '/')
++      continue;
++    *p = '\0';
++    int err = make(path);
++    *p = '/';
++    if (err)
++      return 1;
++  }
++  return make(path);
++}
++
+ int main(int argc, char *argv[]) {
+-  if (argc == 1) {
+-    printf("Usage: mkdir [path]...\n");
++  int i = 1, parents = 0;
++  if (argc > 1 && strcmp(argv[1], "-p") == 0) {
++    parents = 1;
++    i = 2;
++  }
++
++  if (i == argc) {
++    printf("Usage: mkdir [-p] [path]...\n");
+     return 0;
+   }
+ 
+-  for (int i = 1; i < argc; i++) {
+-    const char *path = argv[i];
+-    if (mkdir(path, 0777)) {
++  for (; i < argc; i++) {
++    char *path = argv[i];
++    if (parents ? make_parents(path) : mkdir(path, 0777)) {
+       perror(path);
+       return 1;
+     }
+diff -u -r hand-completed/05_c-linux-file-utils_gQRmSlcTq9c/src/rm.c hand-remade/05_c-linux-file-utils_gQRmSlcTq9c//src/rm.c
+--- hand-completed/05_c-linux-file-utils_gQRmSlcTq9c/src/rm.c	2026-11-11 00:34:35.324649200 -0800
++++ hand-remade/05_c-linux-file-utils_gQRmSlcTq9c//src/rm.c	2026-11-11 00:58:41.198510400 -0800
+@@ -4,6 +4,8 @@
+ #include <dirent.h>
+ #include <string.h>
+ 
++int recursive; // -r: allow remove dir with all child, without it dir is safe
++
+ int walkrm(const char *path) {
+   struct stat st;
+   if (lstat(path, &st)) {
+@@ -20,6 +22,11 @@
+     return 0;
+   }
+ 
++  if (!recursive) {
++    fprintf(stderr, "%s: is dir, use -r\n", path);
++    return 1;
++  }
++
+   // rm abc --> if is folder , we must remove all file child then remove folder abc
+   DIR *dir = opendir(path);
+   if (!dir) {
+@@ -59,12 +66,18 @@
+ }
+ 
+ int main(int argc, char *argv[]) {
+-  if (argc == 1) {
+-    printf("Usage: rm [path]...\n");
++  int i = 1;
++  if (argc > 1 && strcmp(argv[1], "-r") == 0) {
++    recursive = 1;
++    i = 2;
++  }
++
++  if (i == argc) {
++    printf("Usage: rm [-r] [path]...\n");
+     return 0;
+   }
+ 
+-  for (int i = 1; i < argc; i++) {
++  for (; i < argc; i++) {
+     const char *path = argv[i];
+     if (walkrm(path))
+       return 1;

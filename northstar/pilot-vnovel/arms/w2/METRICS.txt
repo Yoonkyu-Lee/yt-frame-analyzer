@@ -1,0 +1,9 @@
+arm        w2
+code lines 349  (own tests 320)
+functions  23
+clippy     3 warnings (incl. summary line)
+own tests  test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.58s
+hidden     test result: FAILED. 21 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.28s
+           test d4_resume_after_cancel_refetches_less_than_whole ... FAILED
+perf  throttled 80MB@10MB/s/conn 1.13s | uneven 80MB (every 3rd conn 1MB/s) 4.36s | unthrottled 512MB 0.54s
+probe      13 facts -> arms/w2/PROBE.txt

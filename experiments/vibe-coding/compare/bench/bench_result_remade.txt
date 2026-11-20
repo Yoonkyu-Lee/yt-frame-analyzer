@@ -1,0 +1,26 @@
+# human code: /mnt/c/Users/Yoonkyu Lee/Desktop/Library/Engineering/yt-frame-analyzer/vibe-coding/hand-remade
+## data structures
+07 human  n=20000  append 0.000s  fold 0.0000s  (sum 199990000)
+07 codex  n=20000  append 0.000s  fold 0.0000s  (sum 199990000)
+07 human  n=100000  append 0.002s  fold 0.0002s  (sum 4999950000)
+07 codex  n=100000  append 0.002s  fold 0.0002s  (sum 4999950000)
+07 human  n=1000000  append 0.024s  fold 0.0024s  (sum 499999500000)
+07 codex  n=1000000  append 0.025s  fold 0.0021s  (sum 499999500000)
+08 human  n=10000000  push 0.047s  read 0.0050s  (sum 49999995000000)
+08 codex  n=10000000  push 0.077s  read 0.0071s  (sum 49999995000000)
+09 human  n=20000  insert 0.001s  lookup 0.000s  (wrong 0)
+09 codex  n=20000  insert 0.002s  lookup 0.001s  (wrong 0)
+09 human  n=100000  insert 0.004s  lookup 0.003s  (wrong 0)
+09 codex  n=100000  insert 0.008s  lookup 0.003s  (wrong 0)
+09 human  n=1000000  insert 0.175s  lookup 0.112s  (wrong 0)
+09 codex  n=1000000  insert 0.172s  lookup 0.048s  (wrong 0)
+
+## file utilities
+  cat 200MB > /dev/null:  human 0.53 s, maxRSS 1380 KB   codex 1.79 s, maxRSS 1384 KB
+  find in 50k files:      human 0.04 s, maxRSS 1380 KB   codex 0.04 s, maxRSS 1748 KB
+  rm 50k files:           human 0.21 s, maxRSS 1316 KB   codex 0.21 s, maxRSS 1384 KB
+
+## tree, 300k files in one dir
+  human stream: 0.05 s, maxRSS 1316 KB
+  human -s    : 0.13 s, maxRSS 19780 KB
+  codex       : 0.52 s, maxRSS 62280 KB

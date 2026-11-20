@@ -1,0 +1,12 @@
+diff -u -r ../hand-coding/03_c-random-moving-numbers_IJe5WtpXx5c/src/main.c hand-completed/03_c-random-moving-numbers_IJe5WtpXx5c//src/main.c
+--- ../hand-coding/03_c-random-moving-numbers_IJe5WtpXx5c/src/main.c	2026-11-10 22:48:26.707610600 -0800
++++ hand-completed/03_c-random-moving-numbers_IJe5WtpXx5c//src/main.c	2026-11-11 00:34:10.194580400 -0800
+@@ -71,7 +71,7 @@
+ 
+ void clear_term(void) {
+   usleep(300000);
+-  system("clear");
++  printf("\033[H\033[2J"); // clear by escape code, no new process each frame
+ }
+ 
+ int main(void) {

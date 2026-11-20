@@ -1,0 +1,8 @@
+arm        w7
+code lines 452  (own tests 546)
+functions  25
+clippy     4 warnings (incl. summary line)
+own tests  test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.80s
+hidden     test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.89s
+perf  throttled 80MB@10MB/s/conn 1.08s | uneven 80MB (every 3rd conn 1MB/s) 2.31s | unthrottled 512MB 0.48s
+probe      13 facts -> arms/w7/PROBE.txt

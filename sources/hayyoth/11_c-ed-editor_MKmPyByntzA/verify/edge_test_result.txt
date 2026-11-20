@@ -1,0 +1,25 @@
+=== video session (68:39): a, 4 lines, ., 2, d, w line.txt, q
+line 2
+--- line.txt (video: line 1 / line 3 / ...)
+line 1
+line 3
+line 4
+=== reopen: 1, 3, p, 4 (expect line 1, line 4, line 4, ?)
+line 1
+line 4
+line 4
+?
+=== E1 delete the LAST line, then p (real ed: prints the new last line)
+==401==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000000030 at pc 0x777ad006cf85 bp 0x7ffdbaeea460 sp 0x7ffdbaee9c08
+=== E2 go to line 1, then a (real ed inserts after line 1)
+one
+NEW
+three
+(null)
+=== E3 w with no file name and no file loaded (expect ?)
+?
+=== E4 a 1500-char line (MAX_LINE_LEN 1024: split into pieces)
+1023
+477
+=== leaks on exit (last line is never freed: loop uses i < count_line)
+SUMMARY: AddressSanitizer: 5 byte(s) leaked in 1 allocation(s).

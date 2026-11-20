@@ -1,0 +1,85 @@
+diff -u -r hand-completed/09_c-hash-table_61XUoywg970/src/main.c hand-remade/09_c-hash-table_61XUoywg970//src/main.c
+--- hand-completed/09_c-hash-table_61XUoywg970/src/main.c	2026-11-11 00:35:22.862710900 -0800
++++ hand-remade/09_c-hash-table_61XUoywg970//src/main.c	2026-11-11 00:59:28.982121300 -0800
+@@ -2,26 +2,32 @@
+ #include <string.h>
+ #include <stdlib.h>
+ 
+-#define SIZE 5
++#define SIZE 65536 // fixed table: fast until ~1M keys, after that chain get long
+ 
+ typedef struct Node {
+-  const char *key;
++  char *key; // own copy, caller string can go away
+   int value;
+   struct Node *next;
+ } Node;
+ 
+ size_t hash(const char *key) {
+-  size_t h = 0;
++  size_t h = 5381;
+ 
+   const char *c = key;
+   while (*c) {
+-    h += *c;
++    h = h * 33 + (unsigned char)*c; // djb2: "abc" and "cba" no longer same index
+     c++;
+   }
+ 
+   return h % SIZE;
+ }
+ 
++char *copy(const char *key) {
++  char *s = strdup(key);
++  if (!s) exit(1);
++  return s;
++}
++
+ void set(Node *arr, const char *key, int value) {
+   size_t index = hash(key);
+   Node *p = &arr[index];
+@@ -29,7 +35,7 @@
+   // this index is empty, just put value to it
+   if (!p->key) {
+     p->value = value;
+-    p->key = key;
++    p->key = copy(key);
+     p->next = NULL;
+     return;
+   }
+@@ -46,7 +52,7 @@
+   Node *newNode = malloc(sizeof(Node));
+   if (!newNode) exit(1);
+   newNode->value = value;
+-  newNode->key = key;
++  newNode->key = copy(key);
+   newNode->next = NULL;
+   p->next = newNode;
+ }
+@@ -61,21 +67,23 @@
+   return 0;
+ }
+ 
+-// first node live in arr, only the chain after it is malloc
++// first node live in arr, only the chain after it is malloc. every key is our copy
+ void destroy(Node *arr) {
+   for (size_t i = 0; i < SIZE; i++) {
++    free(arr[i].key);
+     Node *p = arr[i].next;
+     while (p) {
+       Node *next = p->next;
++      free(p->key);
+       free(p);
+       p = next;
+     }
+-    arr[i].next = NULL;
++    arr[i] = (Node){0};
+   }
+ }
+ 
+ int main(void) {
+-  Node arr[SIZE] = {0};
++  static Node arr[SIZE]; // too big for stack, static start all zero
+ 
+   set(arr, "abc", 22);
+   set(arr, "cba", 77);

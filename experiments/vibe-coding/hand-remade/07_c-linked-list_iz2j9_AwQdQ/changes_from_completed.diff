@@ -1,0 +1,57 @@
+diff -u -r hand-completed/07_c-linked-list_iz2j9_AwQdQ/src/main.c hand-remade/07_c-linked-list_iz2j9_AwQdQ//src/main.c
+--- hand-completed/07_c-linked-list_iz2j9_AwQdQ/src/main.c	2026-11-11 00:35:04.936422900 -0800
++++ hand-remade/07_c-linked-list_iz2j9_AwQdQ//src/main.c	2026-11-11 00:59:06.731753500 -0800
+@@ -15,9 +15,10 @@
+   return p;
+ }
+ 
+-void append(Node *p, int val) {
+-  while (p->next) p = p->next; // go to last node
+-  p->next = create(val);
++// give last node, get new last node back: no need walk to the end every time
++Node *append(Node *tail, int val) {
++  tail->next = create(val);
++  return tail->next;
+ }
+ 
+ void printList(Node *p) {
+@@ -34,18 +35,19 @@
+ int x2(int x) { return x * 2;}
+ int x10(int x) { return x * 10;}
+ 
+-int apply(Node *p, int (*f)(int, int)) {
++// result is long: sum of many int can be bigger than int
++long apply(Node *p, long (*f)(long, long)) {
+   if (!p) return 0; // empty list, nothing to fold
+ 
+-  int result = p->val;
++  long result = p->val;
+   for (p = p->next; p; p = p->next)
+     result = f(result, p->val);
+ 
+   return result;
+ }
+ 
+-int add(int x, int y) { return x + y; }
+-int sub(int x, int y) { return x - y; }
++long add(long x, long y) { return x + y; }
++long sub(long x, long y) { return x - y; }
+ 
+ void freeList(Node *p) {
+   while (p) {
+@@ -58,12 +60,12 @@
+ int main(void) {
+   Node *head = create(10);
+ 
+-  append(head, 20);
+-  append(head, 30);
++  Node *tail = append(head, 20);
++  tail = append(tail, 30);
+ 
+   printList(head);
+ 
+-  printf("sub = %d\n", apply(head, sub));
++  printf("sub = %ld\n", apply(head, sub));
+ 
+   freeList(head);
+   return 0;

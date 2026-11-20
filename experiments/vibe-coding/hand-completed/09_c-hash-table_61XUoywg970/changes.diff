@@ -1,0 +1,60 @@
+diff -u -r ../hand-coding/09_c-hash-table_61XUoywg970/src/main.c hand-completed/09_c-hash-table_61XUoywg970//src/main.c
+--- ../hand-coding/09_c-hash-table_61XUoywg970/src/main.c	2026-11-10 23:30:22.431153400 -0800
++++ hand-completed/09_c-hash-table_61XUoywg970//src/main.c	2026-11-11 00:35:22.862710900 -0800
+@@ -31,11 +31,20 @@
+     p->value = value;
+     p->key = key;
+     p->next = NULL;
++    return;
+   }
+ 
++  // same key already here -> just update value
++  for (Node *q = p; q; q = q->next)
++    if (strcmp(q->key, key) == 0) {
++      q->value = value;
++      return;
++    }
++
+   // if it not empty -> go to last node and add next
+   while (p->next) p = p->next;
+   Node *newNode = malloc(sizeof(Node));
++  if (!newNode) exit(1);
+   newNode->value = value;
+   newNode->key = key;
+   newNode->next = NULL;
+@@ -45,11 +54,24 @@
+ int get(const Node *arr, const char *key) {
+   size_t index = hash(key);
+   const Node *p = &arr[index];
+-  for (; p; p = p->next)
+-   if (strcmp(p->key, key) == 0)
+-    return p->value;
++  for (; p && p->key; p = p->next) // empty cell has no key
++    if (strcmp(p->key, key) == 0)
++      return p->value;
+ 
+- return 0;
++  return 0;
++}
++
++// first node live in arr, only the chain after it is malloc
++void destroy(Node *arr) {
++  for (size_t i = 0; i < SIZE; i++) {
++    Node *p = arr[i].next;
++    while (p) {
++      Node *next = p->next;
++      free(p);
++      p = next;
++    }
++    arr[i].next = NULL;
++  }
+ }
+ 
+ int main(void) {
+@@ -63,5 +85,6 @@
+   printf("%d\n", get(arr, "cba"));
+   printf("%d\n", get(arr, "def"));
+ 
++  destroy(arr);
+   return 0;
+ }

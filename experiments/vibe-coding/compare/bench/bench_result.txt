@@ -1,0 +1,35 @@
+## data structures
+/mnt/c/Users/Yoonkyu Lee/Desktop/Library/Engineering/yt-frame-analyzer/vibe-coding/compare/bench/cb.c: In function ‘main’:
+/mnt/c/Users/Yoonkyu Lee/Desktop/Library/Engineering/yt-frame-analyzer/vibe-coding/compare/bench/cb.c:36:58: warning: ‘%ld’ directive output may be truncated writing between 1 and 19 bytes into a region of size 13 [-Wformat-truncation=]
+   36 |   for (long i = 0; i < n; i++) snprintf(keys[i], 16, "key%ld", i);
+      |                                                          ^~~
+/mnt/c/Users/Yoonkyu Lee/Desktop/Library/Engineering/yt-frame-analyzer/vibe-coding/compare/bench/cb.c:36:54: note: directive argument in the range [0, 1152921504606846975]
+   36 |   for (long i = 0; i < n; i++) snprintf(keys[i], 16, "key%ld", i);
+      |                                                      ^~~~~~~~
+In file included from /usr/include/stdio.h:980,
+                 from /mnt/c/Users/Yoonkyu Lee/Desktop/Library/Engineering/yt-frame-analyzer/vibe-coding/compare/bench/cb.c:2:
+In function ‘snprintf’,
+    inlined from ‘main’ at /mnt/c/Users/Yoonkyu Lee/Desktop/Library/Engineering/yt-frame-analyzer/vibe-coding/compare/bench/cb.c:36:32:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output between 5 and 23 bytes into a destination of size 16
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+07 human  n=20000  append 0.221s  fold 0.0000s  (sum 199990000)
+07 codex  n=20000  append 0.000s  fold 0.0000s  (sum 199990000)
+07 human  n=100000  append 5.898s  fold 0.0001s  (sum 704982704)
+07 codex  n=100000  append 0.002s  fold 0.0001s  (sum 4999950000)
+08 human  n=10000000  push 0.036s  read 0.0045s  (sum 49999995000000)
+08 codex  n=10000000  push 0.088s  read 0.0125s  (sum 49999995000000)
+09 human  n=20000  insert 0.333s  lookup 0.217s  (wrong 0)
+09 codex  n=20000  insert 0.002s  lookup 0.000s  (wrong 0)
+09 human  n=100000  insert 11.303s  lookup 6.767s  (wrong 0)
+09 codex  n=100000  insert 0.012s  lookup 0.002s  (wrong 0)
+09 codex  n=1000000  insert 0.241s  lookup 0.058s  (wrong 0)
+
+## file utilities
+  cat 200MB > /dev/null:  human 0.62 s, maxRSS 1380 KB   codex 2.02 s, maxRSS 1320 KB
+  find in 50k files:      human 0.05 s, maxRSS 1380 KB   codex 0.05 s, maxRSS 1772 KB
+  rm 50k files:           human 0.24 s, maxRSS 1380 KB   codex 0.25 s, maxRSS 1384 KB

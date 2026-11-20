@@ -1,0 +1,8 @@
+arm        w1
+code lines 332  (own tests 550)
+functions  18
+clippy     5 warnings (incl. summary line)
+own tests  test result: FAILED. 14 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.25s
+hidden     test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.08s
+perf  throttled 80MB@10MB/s/conn 1.11s | uneven 80MB (every 3rd conn 1MB/s) 6.12s | unthrottled 512MB 0.51s
+probe      13 facts -> arms/w1/PROBE.txt

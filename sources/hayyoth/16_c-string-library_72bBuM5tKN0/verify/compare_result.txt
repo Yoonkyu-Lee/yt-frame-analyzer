@@ -1,0 +1,8 @@
+verify/compare.c: In function ‘main’:
+verify/compare.c:43:31: warning: ‘strncpy’ output truncated copying 2 bytes from a string of length 5 [-Wstringop-truncation]
+   43 |     hstrncpy(s1, "Goats", 2); strncpy(s2, "Goats", 2);
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~
+=== libc comparison
+0 failures in the libc comparison
+=== hstrncpy with a source shorter than n
+ERROR: AddressSanitizer: global-buffer-overflow

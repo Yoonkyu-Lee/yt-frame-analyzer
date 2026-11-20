@@ -1,0 +1,20 @@
+Reconstruction: src/main.c = 98 lines, 2128 bytes
+  == last vim save in the video: "main.c" 98L, 2128B written (26:52)  -> byte-exact
+
+Build (WSL gcc): -std=c11 -Wall -Wextra -pedantic -fsanitize=address,undefined -> 0 warnings
+
+verify/check.py: ./a.out MONTH YEAR vs Python calendar (same layout), years 1970-2040 + 1900, 1901, 2100, 2400
+  TZ=UTC                  899 months, 0 mismatches
+  TZ=America/Sao_Paulo    899 months, 0 mismatches   (DST used to start at midnight)
+  TZ=Asia/Tehran          899 months, 0 mismatches
+  TZ=America/Havana       899 months, 0 mismatches
+  TZ=Pacific/Apia         899 months, 1 mismatch: 12 2011 prints only "1"
+                          (Samoa skipped 2011-12-30 when it crossed the date line; mktime-based
+                          day counting is affected. Real-world impact: none outside that zone/month.)
+
+Input not validated (shown, not a crash):
+  ./a.out 13 2026   -> prints January 2027's grid with no title (mktime normalises month 13)
+  ./a.out abc       -> atoi gives 0 -> prints the 12 months of year 0
+  ./a.out 1 2 3     -> argc 4 hits no case -> year 0, month 0 -> year 0
+  ./a.out 0 2026    -> month 0 means "whole year" -> 12 months of 2026
+Today's day is highlighted with ESC[7m ... ESC[0m (seen: 17 Nov 2026 in the video, 17 in this run).

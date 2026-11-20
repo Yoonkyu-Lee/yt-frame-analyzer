@@ -1,0 +1,47 @@
+diff -u -r ../hand-coding/08_c-dynamic-array_SOjHybBunAc/src/main.c hand-completed/08_c-dynamic-array_SOjHybBunAc//src/main.c
+--- ../hand-coding/08_c-dynamic-array_SOjHybBunAc/src/main.c	2026-11-10 23:29:11.797282200 -0800
++++ hand-completed/08_c-dynamic-array_SOjHybBunAc//src/main.c	2026-11-11 00:35:07.429547200 -0800
+@@ -20,6 +20,8 @@
+   Slice *sl = malloc(sizeof(Slice));
+   if (!sl) return NULL;
+ 
++  if (cap == 0) cap = 1; // table need at least 1 chair, or cap * 2 stay 0
++
+   sl->len = 0;
+   sl->cap = cap;
+   sl->elm_size = elm_size;
+@@ -32,16 +34,22 @@
+   return sl;
+ }
+ 
+-void sl_append(Slice *sl, void *val) {
++int sl_append(Slice *sl, const void *val) {
+   // on max size table
+   // so, we need move to big table
+   if (sl->len == sl->cap) {
++    // val can point into old table, copy it before table move
++    unsigned char copy[sl->elm_size];
++    memcpy(copy, val, sl->elm_size);
++    val = copy;
++
+     // you don't want call resize every time call append
+-    sl->cap = sl->cap * 2;
+-    int *tmp = realloc(sl->data, sl->elm_size * sl->cap);
+-    // add err handle
++    size_t cap = sl->cap * 2;
++    void *tmp = realloc(sl->data, sl->elm_size * cap);
++    if (!tmp) return 1; // old table still ok, just no new seat
+ 
+     sl->data = tmp;
++    sl->cap = cap;
+   }
+ 
+   //sl->data[sl->len] = val;
+@@ -52,6 +60,7 @@
+   );
+ 
+   sl->len++;
++  return 0;
+ }
+ 
+ void sl_free(Slice *sl) {

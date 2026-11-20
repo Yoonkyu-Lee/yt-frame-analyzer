@@ -1,0 +1,5 @@
+K7 = r0
+M3 = w2
+P5 = w3
+T2 = w1
+Z4 = control

@@ -1,0 +1,122 @@
+# human code: /mnt/c/Users/Yoonkyu Lee/Desktop/Library/Engineering/yt-frame-analyzer/vibe-coding/hand-remade
+## 1. Compiler warnings (count) — author flags: -Wall -Wextra -pedantic -Wno-unused-parameter
+  02_tree: human 0, codex 0
+  03_random-moving-numbers: human 0, codex 0
+  05_linux-file-utils: human 0, codex 0
+  07_linked-list: human 0, codex 0
+  08_dynamic-array: human 0, codex 0
+  09_hash-table: human 0, codex 0
+
+## 2. Data-structure probes under ASan/UBSan
+  -- h07
+    sum 1..1000 via apply(add): 500500 (expect 500500)
+    after map(x2), apply(add): 1001000 (expect 1001000)
+    single-element apply: 42 (expect 42)
+    20000 appends: 0.002 s
+    sum 0..19999 via apply(add): 199990000 (expect 199990000, int would overflow at 1e5)
+    apply on empty list: 0 (expect 0)
+    exit=0
+  -- c07
+    sum 1..1000 (no map/apply in API, summed via list_get): 500500 (expect 500500)
+    20000 appends: 0.001 s
+    pop_front on empty list returns false
+    exit=0
+  -- h08
+    1000 appends from cap 1: ok (len=1000 cap=1024)
+    cap 0 start: len=1 cap=1
+    exit=0
+  -- c08
+    1000 appends from default cap: ok (size=1000 cap=1024)
+    get out of range returns NULL
+    self-push ok: last=0
+    exit=0
+  -- h09
+    get abc after set 22 then 99: 99 (expect 99)
+    nodes in bucket of abc: 1 (expect 1)
+    200 keys in SIZE=65536 table: 0 wrong
+    missing key in empty bucket: 0
+    exit=0
+  -- c09
+    get abc after put 22 then 99: 99 (expect 99), size=1 (expect 1)
+    200 keys: 0 wrong
+    missing key in empty table: not found
+    exit=0
+
+## 3. tree on the same directory
+  -- htree t
+    exit=1
+    | .hidden
+    | z.txt
+    | locked
+    | link_to_a
+    | a
+    |   b
+    |     c.txt
+    |   empty
+    |   loop
+    ! t/locked: Permission denied
+  -- ctree t
+    exit=1
+    | t
+    | ├── a
+    | │   ├── b
+    | │   │   └── c.txt
+    | │   ├── empty
+    | │   └── loop -> .
+    | ├── link_to_a -> a
+    | ├── locked [error: Permission denied]
+    | └── z.txt
+    | 
+    | 4 directories, 4 files
+  -- htree /nope: exit=1 /nope: No such file or directory
+  -- ctree /nope: exit=1 
+
+## 4. File utilities: same intentions, each with its own CLI
+  -- hu
+    hu     hu/touch a.txt                     exit=0 
+    hu     hu/cat a.txt                       exit=0 
+    hu     hu/mkdir d                         exit=0 
+    hu     hu/mkdir d                         exit=1 d: File exists 
+    hu     hu/mkdir x/y                       exit=1 x/y: No such file or directory 
+    hu     hu/mv a.txt b.txt                  exit=0 
+    hu     hu/mv b.txt d                      exit=0 
+    hu     hu/rm f.txt                        exit=0 
+    f.txt removed
+    hu     hu/find *.c tree                   exit=0 tree/w.c tree/sub/q.c 
+    hu     hu/rm tree                         exit=1 tree: is dir, use -r 
+    tree still exists
+    hu     hu/rm -r tree                      exit=0 
+    tree removed
+    hu     hu/touch k.txt                     exit=0 
+    k.txt after touch: 'keep' (expect 'keep')
+    hu     hu/mv n.txt o.txt                  exit=0 
+    o.txt after mv onto it: 'new' (expect 'new')
+    hu     hu/find cat* cat.c                 exit=0 cat.c 
+    hu     hu/rm -r deep                      exit=1 deep/locked/g: Permission denied 
+    after rm on dir with read-only subdir: 3 entries left (expect 3: deep, locked, g)
+  -- cu
+    cu     cu/touch a.txt                     exit=0 
+    cu     cu/cat a.txt                       exit=0 
+    cu     cu/mkdir d                         exit=0 
+    cu     cu/mkdir d                         exit=1 mkdir: cannot create directory 'd': File exists 
+    cu     cu/mkdir x/y                       exit=1 mkdir: cannot create directory 'x/y': No such file or directory 
+    cu     cu/mv a.txt b.txt                  exit=0 
+    cu     cu/mv b.txt d                      exit=0 
+    cu     cu/rm f.txt                        exit=0 
+    f.txt removed
+    cu     cu/find tree -name *.c             exit=0 tree/w.c tree/sub/q.c 
+    cu     cu/rm tree                         exit=1 rm: cannot remove 'tree': Is a directory 
+    tree still exists
+    cu     cu/rm -r tree                      exit=0 
+    tree removed
+    cu     cu/touch k.txt                     exit=0 
+    k.txt after touch: 'keep' (expect 'keep')
+    cu     cu/mv n.txt o.txt                  exit=0 
+    o.txt after mv onto it: 'new' (expect 'new')
+    cu     cu/find cat.c -name cat*           exit=0 cat.c 
+    cu     cu/rm -rf deep                     exit=1 rm: cannot remove 'deep/locked/g': Permission denied 
+    after rm on dir with read-only subdir: 3 entries left (expect 3: deep, locked, g)
+
+## 5. Animation programs: run 2 s in a pseudo-terminal
+  hwalk: exit=124 bytes_written=18402
+  cwalk: exit=124 bytes_written=370550

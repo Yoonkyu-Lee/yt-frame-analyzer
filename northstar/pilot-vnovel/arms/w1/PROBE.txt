@@ -1,0 +1,13 @@
+PROBE Q1_requests_15_bytes = 16
+PROBE Q2_requests_20MB = 17
+PROBE Q3_max_connections = 8
+PROBE Q4_mode_unknown_total = single
+PROBE Q5_left_after_cancel_segmented = <dest>.download (result Ok(false))
+PROBE Q6_left_after_cancel_single = <dest>.download (result Ok(false))
+PROBE Q7_seconds_until_err_when_every_transfer_drops = 3.0 (is_err true)
+PROBE Q13_max_attempts_for_one_piece = 4
+PROBE Q8_typical_ms_between_progress_events = 263
+PROBE Q9_same_size_different_content_after_cancel = corrupt (mixed bytes)
+PROBE Q10_existing_destination = replaced
+PROBE Q11_slow_connection_work_taken_over = no (3.1s for 40MB, 16 range requests)
+PROBE Q12_zero_byte_file = empty file created

@@ -1,0 +1,35 @@
+<h1>Chat pages</h1>
+<div id="messages">
+</div>
+<br>
+<hr>
+<input type="text" id="inpMess" placeholder="Enter Message"><br><br>
+<button onclick="send()">Send</button>
+
+
+<script>
+    // just for demo, don't use it in production
+    const inpMess = document.getElementById("inpMess");
+    const messagesElm = document.getElementById("messages");
+
+    const socket = new WebSocket("ws://localhost:8080/ws");
+
+    async function send() {
+        socket.send(inpMess.value)
+    }
+
+    function appendMessage(mess) {
+        const messElm = document.createElement("div");
+        messElm.innerText = mess;
+        messagesElm.appendChild(messElm);
+    }
+
+    socket.addEventListener("open", (event) => {
+        //socket.send("Hello Server!");
+    });
+
+    socket.addEventListener("message", (event) => {
+        appendMessage(event.data);
+    });
+
+</script>

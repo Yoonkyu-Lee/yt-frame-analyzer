@@ -1,0 +1,14 @@
+[package]
+name = "seg-harness"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Standalone harness: builds one arm's segmented_download.rs without Tauri.
+# run.sh copies the arm under test to arm/segmented_download.rs.
+
+[dependencies]
+reqwest = { version = "0.12.24", features = ["blocking", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order", "unbounded_depth"] }
+tokio = { version = "1", features = ["time", "fs", "io-util", "sync", "rt", "rt-multi-thread", "net"] }

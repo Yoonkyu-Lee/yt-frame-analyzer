@@ -1,0 +1,6 @@
+# regenerable cache: videos, frames, keyframes (python tools/prepare.py <url>)
+work/
+__pycache__/
+a.out
+# private fixture: commercial cover art and personal library metadata (pilot-vnovel harness needs a local copy)
+northstar/pilot-vnovel/library/

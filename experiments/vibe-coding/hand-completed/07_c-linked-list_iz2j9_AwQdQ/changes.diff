@@ -1,0 +1,35 @@
+diff -u -r ../hand-coding/07_c-linked-list_iz2j9_AwQdQ/src/main.c hand-completed/07_c-linked-list_iz2j9_AwQdQ//src/main.c
+--- ../hand-coding/07_c-linked-list_iz2j9_AwQdQ/src/main.c	2026-11-10 23:26:02.475281300 -0800
++++ hand-completed/07_c-linked-list_iz2j9_AwQdQ//src/main.c	2026-11-11 00:35:04.936422900 -0800
+@@ -35,6 +35,8 @@
+ int x10(int x) { return x * 10;}
+ 
+ int apply(Node *p, int (*f)(int, int)) {
++  if (!p) return 0; // empty list, nothing to fold
++
+   int result = p->val;
+   for (p = p->next; p; p = p->next)
+     result = f(result, p->val);
+@@ -45,6 +47,14 @@
+ int add(int x, int y) { return x + y; }
+ int sub(int x, int y) { return x - y; }
+ 
++void freeList(Node *p) {
++  while (p) {
++    Node *next = p->next; // keep next before p is gone
++    free(p);
++    p = next;
++  }
++}
++
+ int main(void) {
+   Node *head = create(10);
+ 
+@@ -55,6 +65,6 @@
+ 
+   printf("sub = %d\n", apply(head, sub));
+ 
+-  // add free
++  freeList(head);
+   return 0;
+ }

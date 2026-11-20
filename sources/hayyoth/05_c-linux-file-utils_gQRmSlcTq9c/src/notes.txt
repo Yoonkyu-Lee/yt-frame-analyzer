@@ -1,0 +1,32 @@
+Build linux files utils in C
+
++---------+------------------------+--------------------------------------+
+|Command  |  Function use          |            Algorithm                 |
++---------+------------------------+--------------------------------------+
+|touch    | fopen                  |                                      |
++---------+------------------------+                                      +
+|cat      | fopen, fgetc, putchar  |         get path and do              |
++---------+------------------------+                                      +
+|mkdir    | mkdir                  |                                      |
++---------+------------------------+--------------------------------------+
+|mv       | stat, rename           | if target is file or not exit, rename|
+|         |                        | if target is dir , move              |
++---------+------------------------+--------------------------------------+
+|rm       | lstat, unlink, rmdir   | walk path, if file remove            |
+|         | opendir, readdir       | if dir, open child, if dir walk path |
++---------+------------------------+--------------------------------------+
+|find     | lstat, strstr          | walk path, if match print            |
+|         | opendir, readdir       | if dir, open child, if dir walk path |
++---------+------------------------+--------------------------------------+
+|tree    |                        | watch my previous video              |
++---------+------------------------+--------------------------------------+
+
+Helper
+- stat : check path, if file is link, follow link
+- lstat: check path, if file is link, return link
+
+struct stat st;
+stat(path, &st) == -1   // have error
+- errno == ENOENT       // not have file
+
+S_ISDIR(st.st_mode)     // is dir

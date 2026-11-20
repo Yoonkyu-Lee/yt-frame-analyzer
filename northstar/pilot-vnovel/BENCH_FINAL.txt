@@ -1,0 +1,5 @@
+r0 perf  throttled 80MB@10MB/s/conn 1.08s | uneven 80MB (every 3rd conn 1MB/s) 6.09s | unthrottled 512MB 0.45s
+control perf  throttled 80MB@10MB/s/conn 1.09s | uneven 80MB (every 3rd conn 1MB/s) 6.08s | unthrottled 512MB 0.57s
+w1 perf  throttled 80MB@10MB/s/conn 1.11s | uneven 80MB (every 3rd conn 1MB/s) 6.11s | unthrottled 512MB 0.47s
+w2 perf  throttled 80MB@10MB/s/conn 1.13s | uneven 80MB (every 3rd conn 1MB/s) 4.35s | unthrottled 512MB 0.50s
+w3 perf  throttled 80MB@10MB/s/conn 1.07s | uneven 80MB (every 3rd conn 1MB/s) 2.32s | unthrottled 512MB 0.42s

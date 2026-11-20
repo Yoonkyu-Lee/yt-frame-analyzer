@@ -1,0 +1,8 @@
+arm        control
+code lines 370  (own tests 240)
+functions  15
+clippy     3 warnings (incl. summary line)
+own tests  test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+hidden     test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.10s
+perf  throttled 80MB@10MB/s/conn 1.08s | uneven 80MB (every 3rd conn 1MB/s) 6.08s | unthrottled 512MB 0.58s
+probe      13 facts -> arms/control/PROBE.txt

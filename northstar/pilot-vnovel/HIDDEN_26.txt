@@ -1,0 +1,16 @@
+== r0: FAILED. 23 passed; 3 failed
+     test d7_preset_cancel_on_empty_single_stream_publishes_nothing ... FAILED
+     test d5_single_stream_partial_206_is_not_published ... FAILED
+     test d5_probe_total_contradicted_by_segments_is_not_a_short_file ... FAILED
+== control: FAILED. 25 passed; 1 failed
+     test d5_single_stream_partial_206_is_not_published ... FAILED
+== w1: FAILED. 23 passed; 3 failed
+     test d7_preset_cancel_on_empty_single_stream_publishes_nothing ... FAILED
+     test d5_single_stream_partial_206_is_not_published ... FAILED
+     test d5_probe_total_contradicted_by_segments_is_not_a_short_file ... FAILED
+== w2: FAILED. 25 passed; 1 failed
+     test d5_single_stream_partial_206_is_not_published ... FAILED
+== w3: FAILED. 23 passed; 3 failed
+     test d7_preset_cancel_on_empty_single_stream_publishes_nothing ... FAILED
+     test d5_single_stream_partial_206_is_not_published ... FAILED
+     test d5_probe_total_contradicted_by_segments_is_not_a_short_file ... FAILED

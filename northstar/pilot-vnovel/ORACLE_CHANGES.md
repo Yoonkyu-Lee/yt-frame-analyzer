@@ -1,0 +1,10 @@
+# Oracle changes (made after an arm was measured — recorded for honesty)
+
+| # | When | What | Why | Effect |
+|---|---|---|---|---|
+| 1 | before any arm | test server stopped counting the throttle sleep after the last chunk as an open connection | D3 counted 15–16 "concurrent" connections for r0 (artifact) | r0 D3 pass |
+| 2 | after r0's reader | Q12 reworded: the server answers the empty file with 200 + `Content-Length: 0` | "a server that supports Range correctly" would answer 416; the reader was right, the question was wrong | Q12 excluded for r0's reader |
+| 3 | after W2 was measured | D4 test: 6 MB → 30 MB, assertion `refetched < n` → `refetched ≤ missing + 9 MiB` | INTENT D4 allows ~1 MiB per connection (8) to be refetched; on 6 MB that allowance covers the whole file, so the test was stricter than the intent. W2 (1 MiB pieces verified in memory) was within the intent and failed | r0 and W2 both 22/22 |
+| 3b | same | probe Q9: 5 MB → 30 MB, cancel at half | with 5 MB, W2 had no completed piece at the cancel, so "correct" was luck, not behavior | r0 and W2 both "corrupt (mixed bytes)" |
+| 4 | after W2's reader | test server got a keep-alive mode that counts open TCP connections; new hidden test `d3_keep_alive_server_never_sees_more_than_eight_open_connections` (hidden tests 22 → 23) | W2's reader argued an unread probe response would hold a 9th connection on a keep-alive server; the close-every-response server could not observe that | r0 and W2 pass (max open ≤ 8, 3 runs each): the concern did not materialize |
+| 5 | after the skeptic reviews | server modes `probe_total` (probe lies about the size) and `single_partial` (plain GET answered with a partial 206); hidden tests 23 → 26: `d5_probe_total_contradicted_by_segments_is_not_a_short_file`, `d5_single_stream_partial_206_is_not_published`, `d7_preset_cancel_on_empty_single_stream_publishes_nothing` | the skeptic called these inherited defects; made reproducible before any fix | r0 23/26, control 25/26, W1 23/26, W2 25/26, W3 23/26 — all three confirmed on the original ([HIDDEN_26.txt](HIDDEN_26.txt)) |

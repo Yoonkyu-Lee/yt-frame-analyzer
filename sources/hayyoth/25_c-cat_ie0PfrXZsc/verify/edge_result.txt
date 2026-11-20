@@ -1,0 +1,29 @@
+## 1. two files (last line without newline is no longer glued)
+
+=========== proj/run.js ============
+a
+b
+
+=========== proj/src/style.css ============
+x{}
+
+## 2. directory walk: hidden .env/.git skipped?
+=========== proj/run.js ============
+=========== proj/link_to_src ============
+=========== proj/src/style.css ============
+=========== proj/src/blob.bin ============
+## 3. '.' as argument
+0
+## 4. './' as argument
+4
+## 5. missing path
+nope: No such file or directory
+## 6. symlink to dir
+
+=========== proj/link_to_src ============
+
+## 7. 5000-byte binary copied exactly?
+same
+## 8. no args
+Usage: /tmp/hcat <file_path>...
+exit=0

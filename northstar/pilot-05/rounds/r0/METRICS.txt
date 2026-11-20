@@ -1,0 +1,9 @@
+round      r0
+files      8
+code lines 812
+functions  36
+warnings   0  (gcc default std, -Wall -Wextra -Wpedantic)
+intent     intent tests: 60 passed, 0 failed
+sanitizers intent tests: 60 passed, 0 failed; reports: 0
+coverage   53.8% of 1164 executable lines run by intent tests
+perf       cat 200MB 1.77s | find 50k -name 0.04s | rm -r 50k 0.21s

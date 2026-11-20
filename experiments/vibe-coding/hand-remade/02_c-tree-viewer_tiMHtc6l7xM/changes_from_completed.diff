@@ -1,0 +1,120 @@
+diff -u -r hand-completed/02_c-tree-viewer_tiMHtc6l7xM/src/main.c hand-remade/02_c-tree-viewer_tiMHtc6l7xM//src/main.c
+--- hand-completed/02_c-tree-viewer_tiMHtc6l7xM/src/main.c	2026-11-11 00:33:57.715642000 -0800
++++ hand-remade/02_c-tree-viewer_tiMHtc6l7xM//src/main.c	2026-11-11 00:58:26.663031700 -0800
+@@ -1,10 +1,12 @@
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <dirent.h>
+ #include <string.h>
+ #include <unistd.h>
+ #include <sys/stat.h>
+ 
+-int color; // only paint dir blue when output is a terminal
++int color;  // only paint dir blue when output is a terminal
++int sorted; // -s: read whole dir and sort by name (cost memory), default is stream
+ 
+ void print_file(const char *name, int is_dir, int indent) {
+   if (indent)
+@@ -16,50 +18,75 @@
+     printf("%s\n", name);
+ }
+ 
++int walk(const char *path, int indent);
++
++// one entry of dir: print it, and walk into it if it is dir
++int visit(const char *path, const struct dirent *dp, int indent) {
++  const char *name = dp->d_name;
++
++  // ignore . and ..
++  if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
++    return 0;
++
++  // walk to sub path
++  size_t len = strlen(path) + strlen(name) + 2;
++  char sub_path[len];
++  snprintf(sub_path, len, "%s/%s", path, name);
++
++  int is_dir = dp->d_type == DT_DIR;
++  // some file system not fill d_type, ask lstat
++  if (dp->d_type == DT_UNKNOWN) {
++    struct stat st;
++    is_dir = lstat(sub_path, &st) == 0 && S_ISDIR(st.st_mode);
++  }
++
++  print_file(name, is_dir, indent);
++  return is_dir ? walk(sub_path, indent + 1) : 0;
++}
++
+ int walk(const char *path, int indent) {
++  int err = 0;
++
++  if (sorted) {
++    struct dirent **list;
++    int n = scandir(path, &list, NULL, alphasort);
++    if (n < 0) {
++      perror(path);
++      return 1;
++    }
++    for (int i = 0; i < n; i++) {
++      if (visit(path, list[i], indent))
++        err = 1;
++      free(list[i]);
++    }
++    free(list);
++    return err;
++  }
++
+   DIR *dir = opendir(path);
+   if (!dir) {
+     perror(path);
+     return 1;
+   }
+ 
+-  int err = 0;
+   struct dirent *dp;
+-  while ((dp = readdir(dir)) != NULL) {
+-    const char *name = dp->d_name;
+-
+-    // ignore . and ..
+-    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+-      continue;
+-
+-    // walk to sub path
+-    size_t len = strlen(path) + strlen(name) + 2;
+-    char sub_path[len];
+-    snprintf(sub_path, len, "%s/%s", path, name);
+-
+-    int is_dir = dp->d_type == DT_DIR;
+-    // some file system not fill d_type, ask lstat
+-    if (dp->d_type == DT_UNKNOWN) {
+-      struct stat st;
+-      is_dir = lstat(sub_path, &st) == 0 && S_ISDIR(st.st_mode);
+-    }
+-
+-    print_file(name, is_dir, indent);
+-    if (is_dir && walk(sub_path, indent + 1))
++  while ((dp = readdir(dir)) != NULL)
++    if (visit(path, dp, indent))
+       err = 1;
+-  }
+ 
+   closedir(dir);
+   return err;
+ }
+ 
+ int main(int argc, char **argv) {
+-  const char *path = "."; // default path is current dir
+-
+-  if (argc > 1) {
+-    path = argv[1];
++  int i = 1;
++  if (argc > 1 && strcmp(argv[1], "-s") == 0) {
++    sorted = 1;
++    i = 2;
+   }
+ 
++  const char *path = i < argc ? argv[i] : "."; // default path is current dir
++
+   color = isatty(STDOUT_FILENO);
+   int err = walk(path, 0);
+ 
